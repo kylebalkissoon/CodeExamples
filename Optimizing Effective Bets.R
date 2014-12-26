@@ -3,7 +3,6 @@ library(PerformanceAnalytics)
 library(PortfolioAnalytics)
  
 EffectiveBets = function(R, w) {
-  ##By Karl Wichorek
  
   # Perform PCA on the returns
   pca <- prcomp(R, cor = FALSE)
