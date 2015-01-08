@@ -85,6 +85,7 @@ dayz=last_day_in_the_month[i]
     ##Update portfolio, account and ending equity
     updatePortf("stocks",Dates=date_string)
     updateAcct(name ="GMV_Example",Dates=date_string)
+    updateEndEq(Account="GMV_Example",date_string)
     my_account = getAccount("GMV_Example")
     
     
@@ -93,10 +94,10 @@ dayz=last_day_in_the_month[i]
   
   
   ###Pass new returns into optimization framework
-  optimal_weights = optimize.portfolio(combined_return_matrix[paste0("'./",dayz_date-2,"'")],portfolio=GMV_Portfolio)
+  optimal_weights = optimize.portfolio(combined_return_matrix[paste0("'./",dayz-2,"'")],portfolio=GMV_Portfolio)
   
   ###For comparison to compute cash drag
-  portfolio_weights[paste0(as.Date(dayz_date)),] = as.numeric(optimal_weights$weights)
+  portfolio_weights[paste0(as.Date(dayz)),] = as.numeric(optimal_weights$weights)
 
   
   ##UpdatePeriod String and pdate portfolio
@@ -105,22 +106,30 @@ dayz=last_day_in_the_month[i]
   
   My_holdings=blotter:::.getBySymbol(getPortfolio("stocks"),'Pos.Qty',Dates=date_string_holdings)
   current_holdings = last(My_holdings)
-  
-  
+  if(any(current_holdings<0)){
+stop("why is there a short holding")
+}
+
+
   if(!dayz==last_day_in_the_month[1]){
     ##Update account value (could be replaced by portfolio valuation, however expected price is used at the moment) 
-    account_value = sum(as.numeric(my_account$summary$Net.Trading.PL))+equity
+    account_value = getEndEq("GMV_Example",as.Date(dayz-1))
   }
   ###Calculate shares to buy based on expected price
   
-  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,combined_price_matrix[paste0(as.Date(dayz_date))],as.numeric(account_value),TRUE)
+  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,combined_price_matrix[paste0(as.Date(dayz))],as.numeric(account_value),TRUE)
   
   
   
   ###Calculate trades to reach shares to buy
-  Trades_to_make = Shares_to_buy-ifelse(sum(current_holdings)==0,0,current_holdings)
+  ###Misordering bug
+if(sum(current_holdings)==0){Trades_to_make = Shares_to_buy
+                             }else{
+  current_holdings = current_holdings[,colnames(Shares_to_buy)]
+  Trades_to_make = Shares_to_buy-as.numeric(current_holdings)
   
-  
+}
+
   ###Use executed prices (to simulate slippage, as you won't always get hte price you want)
   Portfolio_Transactions(Trades_to_make,combined_price_matrix[paste0(as.Date(dayz))],txn_cost=-1)
   #current_portfolio = Shares_to_buy
