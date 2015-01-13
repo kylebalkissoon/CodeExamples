@@ -73,8 +73,63 @@ colnames(portfolio_weights) = colnames(combined_return_matrix)
 
 
 
+
+optimize_portfolio_and_make_transactions = function(R,Portfolio.PortA,Portfolio.Blotter,Account.Blotter,Expected_Execution_Prices,Actual_Execution_Prices,allowFractional=TRUE,TxnCost=0,TxnCostPerShare=0,ManagementFeesBps=0){
+  
+  ###Safety Tests
+  if(!is.xts(R)){stop("R must be an XTS object")}
+  
+  if(!is.portfolio(Portfolio.PortA)){stop("Portfolio.PortA must be a PortfolioAnalytics Portfolio Object")}
+  
+  if(!is.character(Portfolio.Blotter)){stop("Portfolio.Blotter must be a string that is the name of the blotter portfolio")}
+  
+  if(!is.character(Account.Blotter)){stop("Account.Blotter must be a string that is the name of the blotter portfolio")}
+  
+  
+  
+  
+  
+  ###Note Potential issue here due to the dates book may need to be updated
+  My_holdings=blotter:::.getBySymbol(getPortfolio(Portfolio.Blotter),'Pos.Qty',Dates=index(R))
+  
+  current_holdings = last(My_holdings)
+  
+  ###Only for testing
+  if(any(current_holdings<0)){
+    stop("why is there a short holding")
+  }
+  account_value = getEndEq(Account.Blotter,index(R))
+  if(as.numeric(account_value)<0)stop("You're FIRED")
+  
+  #@TODO write this fn
+  optimal_weights = optimize.portfolio(R,portfolio=Portfolio.PortA)
+  #   portfolio_weights[paste0(as.Date(index(R))),] = as.numeric(optimal_weights$weights)
+  
+  
+  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,Expected_Execution_Prices,as.numeric(account_value),allowFractional)
+  
+  
+  ###Calculate trades to reach shares to buy
+  ###Misordering bug fix
+  if(sum(current_holdings)==0){Trades_to_make = Shares_to_buy
+  }else{
+    current_holdings = current_holdings[,colnames(Shares_to_buy)]
+    Trades_to_make = Shares_to_buy-as.numeric(current_holdings)
+    
+  }
+  
+  
+  ###Use executed prices (to simulate slippage, as you won't always get hte price you want)
+  #@TODO Portfolio_Transactions to be updated to take in costs per share
+  Portfolio_Transactions(Trades_to_make,Actual_Execution_Prices,txn_cost=TxnCost)
+  
+  return(optimal_weights$weights)
+  
+}
+
+
 for(i in 1:length(last_day_in_the_month)){
-dayz=last_day_in_the_month[i]
+  dayz=last_day_in_the_month[i]
   
   
   if(!dayz==last_day_in_the_month[1]){
@@ -86,56 +141,105 @@ dayz=last_day_in_the_month[i]
     updatePortf("stocks",Dates=date_string)
     updateAcct(name ="GMV_Example",Dates=date_string)
     updateEndEq(Account="GMV_Example",date_string)
-    my_account = getAccount("GMV_Example")
-    
     
     
   }
-  
-  
-  ###Pass new returns into optimization framework
-  optimal_weights = optimize.portfolio(combined_return_matrix[paste0("'./",dayz-2,"'")],portfolio=GMV_Portfolio)
-  
-  ###For comparison to compute cash drag
-  portfolio_weights[paste0(as.Date(dayz)),] = as.numeric(optimal_weights$weights)
-
-  
-  ##UpdatePeriod String and pdate portfolio
-  
-  date_string_holdings = paste0(initial_date,"/",as.Date(dayz-1))
-  
-  My_holdings=blotter:::.getBySymbol(getPortfolio("stocks"),'Pos.Qty',Dates=date_string_holdings)
-  current_holdings = last(My_holdings)
-  if(any(current_holdings<0)){
-stop("why is there a short holding")
+  portfolio_weights[paste0(as.Date(dayz)),]= optimize_portfolio_and_make_transactions(R=combined_return_matrix[paste0("'./",dayz-2,"'")],Portfolio.PortA = GMV_Portfolio,Portfolio.Blotter = "stocks",Account.Blotter = "GMV_Example",Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))])
 }
 
 
-  if(!dayz==last_day_in_the_month[1]){
-    ##Update account value (could be replaced by portfolio valuation, however expected price is used at the moment) 
-    account_value = getEndEq("GMV_Example",as.Date(dayz-1))
-  }
-  ###Calculate shares to buy based on expected price
-  
-  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,combined_price_matrix[paste0(as.Date(dayz))],as.numeric(account_value),TRUE)
-  
-  
-  
-  ###Calculate trades to reach shares to buy
-  ###Misordering bug
-if(sum(current_holdings)==0){Trades_to_make = Shares_to_buy
-                             }else{
-  current_holdings = current_holdings[,colnames(Shares_to_buy)]
-  Trades_to_make = Shares_to_buy-as.numeric(current_holdings)
-  
-}
 
-  ###Use executed prices (to simulate slippage, as you won't always get hte price you want)
-  Portfolio_Transactions(Trades_to_make,combined_price_matrix[paste0(as.Date(dayz))],txn_cost=-1)
-  #current_portfolio = Shares_to_buy
-  
-  
-}
+
+
+
+
+
+
+
+
+
+
+
+# 
+# 
+# for(i in 1:length(last_day_in_the_month)){
+# dayz=last_day_in_the_month[i]
+#   
+#   
+#   if(!dayz==last_day_in_the_month[1]){
+#     
+#     
+#     date_string = paste0(as.Date(last_day_in_the_month[i-1]),"/",as.Date(dayz-1))
+#     
+#     ##Update portfolio, account and ending equity
+#     updatePortf("stocks",Dates=date_string)
+#     updateAcct(name ="GMV_Example",Dates=date_string)
+#     updateEndEq(Account="GMV_Example",date_string)
+#     my_account = getAccount("GMV_Example")
+#     
+#     
+#     
+#   }
+#   
+#   
+#   ###Pass new returns into optimization framework
+#   optimal_weights = optimize.portfolio(combined_return_matrix[paste0("'./",dayz-2,"'")],portfolio=GMV_Portfolio)
+#   
+#   ###For comparison to compute cash drag
+#   portfolio_weights[paste0(as.Date(dayz)),] = as.numeric(optimal_weights$weights)
+# 
+#   
+#   ##UpdatePeriod String and pdate portfolio
+#   
+#   date_string_holdings = paste0(initial_date,"/",as.Date(dayz-1))
+#   
+#   My_holdings=blotter:::.getBySymbol(getPortfolio("stocks"),'Pos.Qty',Dates=date_string_holdings)
+#   current_holdings = last(My_holdings)
+#   if(any(current_holdings<0)){
+# stop("why is there a short holding")
+# }
+# 
+# 
+#   if(!dayz==last_day_in_the_month[1]){
+#     ##Update account value (could be replaced by portfolio valuation, however expected price is used at the moment) 
+#     account_value = getEndEq("GMV_Example",as.Date(dayz-1))
+#   }
+#   ###Calculate shares to buy based on expected price
+#   
+#   Shares_to_buy = Weight_to_quantity(optimal_weights$weights,combined_price_matrix[paste0(as.Date(dayz))],as.numeric(account_value),TRUE)
+#   
+#   
+#   
+#   ###Calculate trades to reach shares to buy
+#   ###Misordering bug
+# if(sum(current_holdings)==0){Trades_to_make = Shares_to_buy
+#                              }else{
+#   current_holdings = current_holdings[,colnames(Shares_to_buy)]
+#   Trades_to_make = Shares_to_buy-as.numeric(current_holdings)
+#   
+# }
+# 
+#   ###Use executed prices (to simulate slippage, as you won't always get hte price you want)
+#   Portfolio_Transactions(Trades_to_make,combined_price_matrix[paste0(as.Date(dayz))],txn_cost=-1)
+#   #current_portfolio = Shares_to_buy
+#   
+#   
+# }
+
+# my_account = getAccount("GMV_Example")
+# my_portfolio_blotter = getPortfolio("stocks")
+# save(my_account,file="c:/users/kyle/documents/IndexSimulator/GMV_example.rdata")
+# save(my_portfolio_blotter,file="c:/users/kyle/documents/IndexSimulator/GMV_example_port.rdata")
+
+# R = combined_return_matrix[paste0("'./",dayz-2,"'")]
+# Portfolio.PortA= GMV_Portfolio
+# Portfolio.Blotter = "stocks"
+# Account.Blotter = "GMV_Example"
+# Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))]
+# Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))]
+# allowFractional=TRUE
+# TxnCost=0
+
 
 
 
