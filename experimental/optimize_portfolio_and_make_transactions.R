@@ -25,14 +25,16 @@ optimize_portfolio_and_make_transactions = function(R,
   
   ###Safety Tests
   if(!is.xts(R)){stop("R must be an XTS object")}
-  
+
   if(!is.portfolio(Portfolio.PortA)){stop("Portfolio.PortA must be a PortfolioAnalytics Portfolio Object")}
   
   if(!is.character(Portfolio.Blotter)){stop("Portfolio.Blotter must be a string that is the name of the blotter portfolio")}
   
   if(!is.character(Account.Blotter)){stop("Account.Blotter must be a string that is the name of the blotter portfolio")}
   
+  if(!is.xts(Expected_Execution_Prices)){stop("Expected_Execution_Prices must be an xts object")}
   
+  if(!is.xts(Actual_Execution_Prices)){stop("Actual_Execution_Prices must be an xts object")}
   
   
   
@@ -42,11 +44,12 @@ optimize_portfolio_and_make_transactions = function(R,
   current_holdings = last(My_holdings)
   
   ###Only for testing
-  if(any(current_holdings<0)){
-    stop("why is there a short holding")
-  }
+  #if(any(current_holdings<0)){
+  #  stop("why is there a short holding")
+  #}
   account_value = getEndEq(Account.Blotter,index(R))
-  if(as.numeric(account_value)<0)stop("You're FIRED")
+  ##If you got no money, you can't invest!
+  if(as.numeric(account_value)<=0)stop("BANKRUPT")
   
   #@TODO write this fn
   optimal_weights = optimize.portfolio(R,portfolio=Portfolio.PortA)
