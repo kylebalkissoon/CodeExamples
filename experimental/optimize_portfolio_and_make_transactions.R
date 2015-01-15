@@ -1,20 +1,3 @@
-#' Wrapper function to apply a portfolio analytics optimization 
-#' to a return series, generate weights, shares, trades and executions.
-#'
-#' @param R is a matrix of returns
-#' @param Portfolio.PortA is the PortfolioAnalytics Portfolio object
-#' @param Portfolio.Blotter is a string containing the name of the blotter portfolio for which the trades will be made
-#' @param Account.Blotter is a string containing the name of the blotter account in which the portfolio sits
-#' @param Expected_Execution_Prices is the expected prices or valuations on which weights will be transformed to shares
-#' @param Actual_Execution_Prices is the Prices at which the trades have actually executed it 
-#' @param allowFractional is a boolean to allow fractional share units (e.g. an index or simulation)
-#' @param TxnCost Flat transaction fee PER TRADE 
-#' @param TxnCostPerShare transaction fee per share (Not currently supported)
-#' @param ManagementFeeBps Management Fee to be applied (Not currently supported!)
-#' @author Kyle Balkissoon {kylebalkissoon@gmail.com}
-#' @export
-
-
 optimize_portfolio_and_make_transactions = function(R,
                                                     Portfolio.PortA,
                                                     Portfolio.Blotter,
