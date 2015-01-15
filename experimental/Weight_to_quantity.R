@@ -22,8 +22,7 @@ Weight_to_quantity = function(w,expected_price,equity,allow_fractional=FALSE,sea
   }
   
   ##Find closest whole lot trade
-  ans = shareSearch(optimal_allocation,expected_price,search_area,equity,max_equity_mult)
-
+  ans = shareSearch(optimal_allocation = optimal_allocation,expected_price = expected_price,share_deviation = search_area,equity = equity,max_equity_mult = max_equity_mult)
   
   return(ans)
   
