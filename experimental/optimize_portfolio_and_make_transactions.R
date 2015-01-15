@@ -20,7 +20,7 @@ optimize_portfolio_and_make_transactions = function(R,
                                                     Portfolio.Blotter,
                                                     Account.Blotter,
                                                     Expected_Execution_Prices,
-                                                    Actual_Execution_Prices,search_area=0.05,max_equity_mult=1
+                                                    Actual_Execution_Prices,search_area=0.05,max_equity_mult=1,
                                                     allowFractional=TRUE,TxnCost=0,TxnCostPerShare=0,ManagementFeesBps=0){
   
   ###Safety Tests
