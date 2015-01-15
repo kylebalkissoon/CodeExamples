@@ -1,8 +1,11 @@
 shareSearch = function(optimal_allocation,expected_price,share_deviation,equity,max_equity_mult = 1){
-  share_deviation = 0.05
+  
+  ##Create search bounds
   upper_search_bound =round(optimal_allocation,0)+round(share_deviation*optimal_allocation,0)
   lower_search_bound = round(optimal_allocation,0)-round(share_deviation*optimal_allocation,0)
   
+  
+  ###string for expand grid
   grid_string = ""
   for( syms in colnames(optimal_allocation)){
     step1 = paste0(syms,"=",as.numeric(lower_search_bound[,syms]),":",as.numeric(upper_search_bound[,syms]),",")
@@ -10,19 +13,21 @@ shareSearch = function(optimal_allocation,expected_price,share_deviation,equity,
     
     
   }
+  ###Search space
   my_search_space = eval(parse(text=paste0("expand.grid(",grid_string,"KEEP.OUT.ATTRS=TRUE)")))
   
   ###Remove infeasible combinations
   equity_check = equity_test(my_search_space,expected_price,equity*max_equity_mult)
   my_search_space = my_search_space[equity_check,]
-  equity_required = apply(my_search_space,1,FUN=weight_diff,y=optimal_allocation)
+
+  ###Compute distance
+  my_distance= rowSums((my_search_space-matrix(as.numeric(optimal_allocation),nrow=nrow(my_search_space),ncol=ncol(expected_price),byrow=TRUE))^2)
   
- my_distance= rowSums((my_search_space-matrix(as.numeric(optimal_allocation),nrow=nrow(my_search_space),ncol=ncol(expected_price),byrow=TRUE))^2)
-  
+  ###Return the best
+  ans = my_search_space[which.min(my_distance),]  
  
- ans = my_search_space[which.min(my_distance),]  
- 
- 
+   return(ans)
+
  
 }
 
