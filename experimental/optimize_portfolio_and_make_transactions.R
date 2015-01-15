@@ -25,7 +25,7 @@ optimize_portfolio_and_make_transactions = function(R,
   
   ###Safety Tests
   if(!is.xts(R)){stop("R must be an XTS object")}
-
+  
   if(!is.portfolio(Portfolio.PortA)){stop("Portfolio.PortA must be a PortfolioAnalytics Portfolio Object")}
   
   if(!is.character(Portfolio.Blotter)){stop("Portfolio.Blotter must be a string that is the name of the blotter portfolio")}
@@ -55,8 +55,8 @@ optimize_portfolio_and_make_transactions = function(R,
   optimal_weights = optimize.portfolio(R,portfolio=Portfolio.PortA)
   #   portfolio_weights[paste0(as.Date(index(R))),] = as.numeric(optimal_weights$weights)
   
-  
-  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,Expected_Execution_Prices,as.numeric(account_value),allowFractional)
+    
+  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,Expected_Execution_Prices,as.numeric(account_value),allowFractional,search_area,max_equity_mult=1)
   
   
   ###Calculate trades to reach shares to buy
