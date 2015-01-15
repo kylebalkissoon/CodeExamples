@@ -20,7 +20,7 @@ optimize_portfolio_and_make_transactions = function(R,
                                                     Portfolio.Blotter,
                                                     Account.Blotter,
                                                     Expected_Execution_Prices,
-                                                    Actual_Execution_Prices,
+                                                    Actual_Execution_Prices,search_area=0.05,max_equity_mult=1
                                                     allowFractional=TRUE,TxnCost=0,TxnCostPerShare=0,ManagementFeesBps=0){
   
   ###Safety Tests
@@ -56,7 +56,12 @@ optimize_portfolio_and_make_transactions = function(R,
   #   portfolio_weights[paste0(as.Date(index(R))),] = as.numeric(optimal_weights$weights)
   
     
-  Shares_to_buy = Weight_to_quantity(optimal_weights$weights,Expected_Execution_Prices,as.numeric(account_value),allowFractional,search_area,max_equity_mult=1)
+  Shares_to_buy = Weight_to_quantity(w = optimal_weights$weights,
+                                     expected_price = Expected_Execution_Prices,
+                                     equity=as.numeric(account_value),
+                                     allow_fractional = allowFractional,
+                                     search_area=search_area,
+                                     max_equity_mult)
   
   
   ###Calculate trades to reach shares to buy
