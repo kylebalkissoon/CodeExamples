@@ -1,5 +1,7 @@
 #' Generates Portfolio share quantities based on weights, expected price, portfolio equity and fractional execution or (not)
 #'
+#' The \code{Weight_to_quantity} function goes through each symbol and adds the transaction
+#'
 #' 
 #'
 #'
@@ -20,9 +22,9 @@ Weight_to_quantity = function(w,expected_price,equity,allow_fractional=FALSE,sea
     return(optimal_allocation)
   }
   
-  ans = shareSearch(optimal_allocation,expected_price,equity,max_deviation,max_equity_mult)
+  ans = shareSearch(optimal_allocation,expected_price,search_area,equity,max_equity_mult)
 
   
-  return(temp_ans$bestmem)
+  return(ans)
   
 }
