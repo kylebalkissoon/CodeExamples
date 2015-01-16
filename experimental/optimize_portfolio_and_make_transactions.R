@@ -12,11 +12,7 @@ source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/maste
 source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/optimize_portfolio_and_make_transactions.R")
 source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/shareSearch.R")
 
-setwd('c:/ck_repo')
 
-source('./Code_Utilities/Data_Functions.R')
-source('./Code_Utilities/Portfolio_Functions.R')
-source('./Code_Utilities/Reporting_Functions.R')
 ### US ETF List
 symbol_list = c('XLF','XLE','XLU','XLK','XLB','XLP','XLY','XLI','XLV','TLT','GLD')
 
