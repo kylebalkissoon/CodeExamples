@@ -66,14 +66,14 @@ GMV_Portfolio = add.objective(portfolio=GMV_Portfolio,type='risk',name='StdDev')
 end_of_month=endpoints(combined_return_matrix[,1],on="months")
 last_day_in_the_month=index(combined_return_matrix)[end_of_month]
 
-
+###Monthly return days
 monthly_returns = combined_price_matrix[last_day_in_the_month,]
 monthly_returns = ROC(monthly_returns,type='discrete')
 
-
+### Rebalancing dates
 last_day_in_the_month = as.Date(last_day_in_the_month[13:length(last_day_in_the_month)])
 
-account_value = equity
+### Holder for portfolio weights
 portfolio_weights = xts(matrix(nrow=nrow(combined_return_matrix),ncol=ncol(combined_return_matrix)),order.by=index(combined_return_matrix))
 colnames(portfolio_weights) = colnames(combined_return_matrix)
 
