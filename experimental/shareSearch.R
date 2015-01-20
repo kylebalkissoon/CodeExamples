@@ -1,8 +1,11 @@
-shareSearch = function(optimal_allocation,expected_price,share_deviation,equity,max_equity_mult = 1){
+shareSearch = function(optimal_allocation,expected_price,equity,max_equity_mult = 1){
   
-  ##Create search bounds
-  upper_search_bound =round(optimal_allocation,0)+round(share_deviation*optimal_allocation,0)
-  lower_search_bound = round(optimal_allocation,0)-round(share_deviation*optimal_allocation,0)
+ 
+  
+  
+  ##Create search bounds (+/- 1 lot for each position)
+  upper_search_bound =round(optimal_allocation,0)+rep(1,ncol(optimal_allocation))
+  lower_search_bound = round(optimal_allocation,0)-rep(1,ncol(optimal_allocation))
   
   
   ###string for expand grid
@@ -26,8 +29,8 @@ shareSearch = function(optimal_allocation,expected_price,share_deviation,equity,
   ###Return the best
   ans = my_search_space[which.min(my_distance),]  
  
-   return(ans)
-
+  return(ans)
+ 
  
 }
 
