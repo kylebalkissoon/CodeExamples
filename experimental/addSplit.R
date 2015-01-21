@@ -62,7 +62,7 @@ addSplit <- function(Portfolio, Symbol, TxnDate, SplitRatio,CashInLieuPrice=0, .
   TxnAvgCost = TxnFees
   
   #Update the Positions Average Cost
-  PrevPosAvgCost = .getPosAvgCost(pname, Symbol, TxnDate)
+  PrevPosAvgCost = blotter:::.getPosAvgCost(pname, Symbol, TxnDate)
   PosAvgCost = ((PrevPosAvgCost*PrevPosQty)-CashInLieu)/PosQty # but carry it forward in $txn
   
   # Calculate any realized profit or loss (net of fees) from the transaction, 
