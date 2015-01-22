@@ -49,12 +49,15 @@ optimize_portfolio_and_make_transactions = function(R,
   #  stop("why is there a short holding")
   #}
   account_value = getEndEq(Account.Blotter,index(R))
+  
   ##If you got no money, you can't invest!
   if(as.numeric(account_value)<=0)stop("BANKRUPT")
   
-  #@TODO write this fn
+
   optimal_weights = optimize.portfolio(R,portfolio=Portfolio.PortA)
   #   portfolio_weights[paste0(as.Date(index(R))),] = as.numeric(optimal_weights$weights)
+  
+  ##@TODO Value based on current holdings and expected price 
   
 
     
