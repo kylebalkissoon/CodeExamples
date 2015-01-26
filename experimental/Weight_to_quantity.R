@@ -16,7 +16,7 @@
 
 
 Weight_to_quantity = function(w,expected_price,equity,allow_fractional=FALSE,max_equity_mult=1){
-  optimal_allocation = (w*equity)/expected_price
+  optimal_allocation = (w*equity)/as.numeric(expected_price)
   if(allow_fractional==TRUE){
     return(optimal_allocation)
   }
