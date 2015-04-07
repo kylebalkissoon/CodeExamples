@@ -152,7 +152,7 @@ make_the_stats = function(Ra,Rb){
                                      'vol',
                                      'TrackingError')
   
-  colnames(detailed_stats_table) = c('CKC','Benchmark')
+  colnames(detailed_stats_table) = c('Portfolio','Benchmark')
   
   Year_stats = data.frame(return_table[,13],return_table_bench[,13])
   rownames(Year_stats) = rownames(return_table)
