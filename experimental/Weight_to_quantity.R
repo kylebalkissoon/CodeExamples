@@ -15,17 +15,19 @@
 
 
 
-Weight_to_quantity = function(w,expected_price,equity,allow_fractional=FALSE,max_equity_mult=1){
+Weight_to_quantity = function(w,expected_price,equity,allow_fractional=FALSE,max_equity_mult=1,lotSize=100){
   optimal_allocation = (w*equity)/as.numeric(expected_price)
   
   ###Bug fix in the event you have a price of 0 e.g. bankrupt stock 
-  optimal_allocation[,is.infinite(optimal_allocation)] = 0
+  if(any(is.infinite(optimal_allocation))){
+  optimal_allocation[,is.infinite(optimal_allocation)] = 0}
   if(allow_fractional==TRUE){
     return(optimal_allocation)
   }
   
   ##Find closest whole lot trade
-  ans = shareSearch(optimal_allocation = optimal_allocation,expected_price = expected_price,equity = equity,max_equity_mult = max_equity_mult)
+#   ans = shareSearch(optimal_allocation = optimal_allocation,expected_price = expected_price,equity = equity,max_equity_mult = max_equity_mult)
+  ans = RoundLotAllocation(optimal_allocation,expected_price = expected_price,equity = equity,lotSize = 100)
   
   return(ans)
   

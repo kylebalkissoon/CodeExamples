@@ -7,11 +7,11 @@ library(DEoptim)
 library(sqldf)
 
 ##Point these to the two files
-source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/Portfolio_Transactions.R")
-source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/Weight_to_quantity.R")
-source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/optimize_portfolio_and_make_transactions.R")
-source(file="https://raw.githubusercontent.com/kylebalkissoon/CodeExamples/master/experimental/shareSearch.R")
-
+source(file="~/CodeExamples/experimental/Portfolio_Transactions.R")
+source(file="~/CodeExamples/experimental/Weight_to_quantity.R")
+source(file="~/CodeExamples/experimental/optimize_portfolio_and_make_transactions.R")
+source(file="~/CodeExamples/experimental/experimental/shareSearch.R")
+source(file="~/CodeExamples/experimental/RoundLotAllocation.R")
 
 ### US ETF List
 symbol_list = c('XLF','XLE','XLU','XLK','XLB','XLP','XLY','XLI','XLV','TLT','GLD')
@@ -37,12 +37,13 @@ colnames(combined_return_matrix) = symbol_list
 colnames(combined_price_matrix) = symbol_list
 ##Subset to arbitary future date
 combined_return_matrix = combined_return_matrix['2005-01-01/2015-12-31']
+combined_price_matrix = combined_price_matrix['2005-01-01/2015-12-31']
 
-
+sma_combined_price_matrix = SMA(combined_price_matrix,30)
 ###Set Up Financial Instruments and portfolio Equity
 currency("USD")
 stock(symbol_list,currency='USD')
-equity = 100000000
+equity = 1000000
 initial_date = as.POSIXct('2005-12-31 17:00:00')
 
 ##Make sure objects don't exist (for testing will throw a warning if objects don't exist)
@@ -95,7 +96,7 @@ for(i in 1:length(last_day_in_the_month)){
     
     
   }
-  portfolio_weights[paste0(as.Date(dayz)),]= optimize_portfolio_and_make_transactions(R=combined_return_matrix[paste0("'./",dayz-2,"'")],Portfolio.PortA = GMV_Portfolio,Portfolio.Blotter = "stocks",Account.Blotter = "GMV_Example",Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],allowFractional=FALSE,search_area = 0.005)
+  portfolio_weights[paste0(as.Date(dayz)),]= optimize_portfolio_and_make_transactions(R=combined_return_matrix[paste0("'./",dayz-2,"'")],Portfolio.PortA = GMV_Portfolio,Portfolio.Blotter = "stocks",Account.Blotter = "GMV_Example",Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],allowFractional=FALSE)
 }
 
 
