@@ -43,7 +43,7 @@ sma_combined_price_matrix = SMA(combined_price_matrix,30)
 ###Set Up Financial Instruments and portfolio Equity
 currency("USD")
 stock(symbol_list,currency='USD')
-equity = 1000000
+equity = 100000
 initial_date = as.POSIXct('2005-12-31 17:00:00')
 
 ##Make sure objects don't exist (for testing will throw a warning if objects don't exist)
@@ -100,10 +100,10 @@ for(i in 1:length(last_day_in_the_month)){
 }
 
 
-###update to today
-updatePortf("stocks",Dates=)
-updateAcct(name ="GMV_Example",Dates=Sys.Date())
-updateEndEq(Account="GMV_Example",Sys.Date())
+###update to today or last day
+updatePortf("stocks",Dates = end(combined_return_matrix))
+updateAcct(name ="GMV_Example",Dates=end(combined_return_matrix))
+updateEndEq(Account="GMV_Example",end(combined_return_matrix))
 
 
 
@@ -123,9 +123,9 @@ daily_acct_equity = to.daily(my_equity)
 ##Grab this monthly
 
 
-equity_curve_matrix = merge.xts(Cl(daily_acct_equity))/100)
-equity_curve_matrix=equity_curve_matrix[!is.na(equity_curve_matrix[,1]),]
-colnames(equity_curve_matrix) = c('Price Space')
+# equity_curve_matrix = merge.xts(Cl(daily_acct_equity))/100
+# equity_curve_matrix=equity_curve_matrix[!is.na(equity_curve_matrix[,1]),]
+# colnames(equity_curve_matrix) = c('Price Space')
 
 ##Note returns are end of month and weights are at the exact point in time, pushing the weights to the next month to make them multiply correctly
 monthly_portfolio_return = xts(rowSums(monthly_returns['2008/2014']*lag(the_weights['2008/2014'],1)),order.by=index(monthly_returns['2008/2014']))
