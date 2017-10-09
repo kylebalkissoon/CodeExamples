@@ -135,7 +135,7 @@ for(i in 1:length(last_day_in_the_month)){
     
     
   }
-  portfolio_weights[paste0(as.Date(dayz)),]= optimize_portfolio_and_make_transactions(R=combined_return_matrix[paste0("'./",dayz-2,"'")],Portfolio.PortA = GMV_Portfolio,Portfolio.Blotter = "stocks",Account.Blotter = "GMV_Example",Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],allowFractional=FALSE,search_area = 0.005)
+  portfolio_weights[paste0(as.Date(dayz)),]= optimize_portfolio_and_make_transactions(R=combined_return_matrix[paste0("'./",dayz-2,"'")],Portfolio.PortA = GMV_Portfolio,Portfolio.Blotter = "stocks",Account.Blotter = "GMV_Example",Expected_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],Actual_Execution_Prices = combined_price_matrix[paste0(as.Date(dayz))],allowFractional=FALSE)
 }
 
 
